@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.2",
-    "express-vue": "^4.0.13"
+    "hbs": "^4.0.1"
   }
 }
