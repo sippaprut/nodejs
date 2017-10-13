@@ -93,5 +93,4 @@ app.get('/bad' , (req , res) => {
 
 app.listen(port , () => {
 	console.log('Server is upon in port ' + port);
-	//console.log('Vue root is ' , vueOptions.rootPath )
 });
