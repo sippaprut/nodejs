@@ -2,6 +2,7 @@ const express = require('express');
 const hbs = require('hbs');
 const fs = require('fs');
 
+const port = process.env.PORT || 3000;
 let app = express();
 
 hbs.registerPartials( __dirname + '/views/partials' );
@@ -46,6 +47,12 @@ app.use( (req , res , next ) => {
 	}
 });
 
+app.use('/about' , (req , res , next) => {
+	console.log("Middle ware about us");
+	next();
+	//res.sendStatus(401)
+})
+
 
 //Set middleware for get path
 app.use( express.static(__dirname + '/public') );
@@ -84,7 +91,7 @@ app.get('/bad' , (req , res) => {
 	})
 });
 
-app.listen(3000 , () => {
-	console.log('Server is upon in port 3000');
+app.listen(port , () => {
+	console.log('Server is upon in port ' + port);
 	//console.log('Vue root is ' , vueOptions.rootPath )
 });
