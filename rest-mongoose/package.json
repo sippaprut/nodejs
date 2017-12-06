@@ -1,5 +1,5 @@
 {
-  "name": "node-mongodb",
+  "name": "rest-mongoose",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,10 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mongodb": "^2.2.33",
-    "lodash": "^4.17.4"
-  },
-  "devDependencies": {
-    "yargs": "^4.7.1"
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "mongoose": "^4.13.6"
   }
 }
