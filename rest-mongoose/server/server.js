@@ -20,12 +20,8 @@ app.post('/todos' , ( req , res , next ) => {
 	});
 
 	newData.save().then( (result) => {
-		res.send({
-			status : true ,
-			result
-		});
+		res.send(result);
 	} , ( {message} ) => {
-		console.log("Unable to save Data")
 		res.status(400).send({
 			status : false ,
 			message : message
@@ -38,7 +34,7 @@ app.listen(port , () => {
 	console.log('Server is upon in port' + port);
 });
 
-
+module.exports = {app};
 
 
 
