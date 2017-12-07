@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const { mongoose } = require('./db/mongoose');
 
 
-const {Todo} = require('./models/todo');
+const {Todos} = require('./models/todo');
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -14,8 +14,23 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 
 app.post('/todos' , ( req , res , next ) => {
-	res.send(req.body)
-	console.log(req);
+	let newData = new Todos({
+		text : req.body.text ,
+		created : req.body.created
+	});
+
+	newData.save().then( (result) => {
+		res.send({
+			status : true ,
+			result
+		});
+	} , ( {message} ) => {
+		console.log("Unable to save Data")
+		res.status(400).send({
+			status : false ,
+			message : message
+		});
+	})
 });
 
 
