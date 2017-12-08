@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
+
 const { mongoose } = require('./db/mongoose');
 
 
@@ -28,6 +29,37 @@ app.post('/todos' , ( req , res , next ) => {
 		});
 	})
 });
+
+app.get('/todos' , (req , res , next ) => {
+
+	let params = {};
+
+	if ( typeof req.query.id !== "undefined" ) {
+		params._id = req.query.id;
+	}
+
+	Todos.find(params).then( (result) => {
+		if ( result.length == 0 ) {
+			res.status(404).send(result);
+			return ;
+		}
+		res.send({result});
+	} , 
+	(err) => {
+		res.status(404).send({
+			status : false ,
+			err
+		});
+	}).catch( (e) => {
+		res.status(404).send({
+			status : false ,
+			err
+		});
+	}) ; 
+
+});
+
+
 
 
 app.listen(port , () => {
