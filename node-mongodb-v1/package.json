@@ -1,0 +1,19 @@
+{
+  "name": "node-mongodb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "mongodb": "^2.2.33",
+    "mongoose": "^4.13.6"
+  },
+  "devDependencies": {
+    "yargs": "^4.7.1"
+  }
+}

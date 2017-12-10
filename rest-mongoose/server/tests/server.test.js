@@ -67,32 +67,67 @@ describe('GET /todos' , () => {
 		});
 	});
 
-	it ('should get a One Todo' , (done) => {
+	// it ( 'should get 404 error when can not found todo' , (done) => {
+	// 	request(app)
+	// 		.get('/todos')
+	// 		.query( { id : '5a2a4ea253c31d3ae8e9a1e8' } )
+	// 		.expect(404)
+	// 		.end( (err , res) => {
+	// 			if (err) return done(err);
+	// 			done();
+	// 		});
+	// });
+});
+
+describe('GET /todo/{ID}' , () => {
+	it ( 'should be error if id equal empty' , (done) => {
 		request(app)
-		 .get('/todos')
-		 .query( { id : '5a2a4ea253c31d3ae8e9a1e7' } )
+		.get('/todo/')
+		.expect(404)
+		.end( (err , res) => { 
+			if (err) return done(err);
+			done();
+		})
+	});
+
+	it ( 'should be error if id is invalid'  , (done) => {
+		request(app)
+		.get('/todo/123')
+		.expect(401)
+		.end( (err , res) => {
+			if (err) return done(err);
+			expect(res.body.message).toBe('ID is invalid');
+			done();
+		})
+	});
+
+	it ('should be error when Todo is not found' , (done) => {
+		let id = '5a2391bde8fbd304c14e28a8';
+		request(app)
+		 .get(`/todo/${id}`)
+		 .expect(404)
+		 .end( (err , res) => {
+		 	if (err) return done(err);
+		 	expect(res.body.result.length).toBe(0);
+		 	
+		 	expect(res.body.message).toBe('Todo is not found');
+		 	done();
+		 })
+	});
+
+
+	it ('should get a One Todo' , (done) => {
+		let id = '5a239142aa529104a5f3d102';
+		request(app)
+		 .get(`/todo/${id}`)
 		 .expect(200)
 		 .end( (err , res) => {
 		 	if (err) return done(err);
-		 	expect(res.body.result.length).toBe(1);
 			done();
 		 });
 	});
-
-	it ( 'should get 404 error when can not found todo' , (done) => {
-		request(app)
-			.get('/todos')
-			.query( { id : '5a2a4ea253c31d3ae8e9a1e8' } )
-			.expect(404)
-			.end( (err , res) => {
-				if (err) return done(err);
-				done();
-			});
-	});
-
-
-
 });
+
 
 after(function() {
    // runs after all tests in this block

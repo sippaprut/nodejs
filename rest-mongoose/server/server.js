@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+//const { ObjectID } = require('mongodb');
 
 const { mongoose } = require('./db/mongoose');
 
@@ -32,13 +32,12 @@ app.post('/todos' , ( req , res , next ) => {
 
 app.get('/todos' , (req , res , next ) => {
 
-	let params = {};
+	// let params = {};
 
-	if ( typeof req.query.id !== "undefined" ) {
-		params._id = req.query.id;
-	}
-
-	Todos.find(params).then( (result) => {
+	// if ( typeof req.query.id !== "undefined" ) {
+	// 	params._id = req.query.id;
+	// }
+	Todos.find().then( (result) => {
 		if ( result.length == 0 ) {
 			res.status(404).send(result);
 			return ;
@@ -56,7 +55,30 @@ app.get('/todos' , (req , res , next ) => {
 			err
 		});
 	}) ; 
+});
 
+app.get('/todo/:id' , (req , res , next) => {
+	
+	if ( mongoose.Types.ObjectId.isValid(req.params.id) === false ) {
+		res.status(401).send({
+			message : 'ID is invalid'
+		});
+	}
+
+	Todos.findById(req.params.id).then( (data) => {
+		if ( data == null ) {
+			res.status(404).send({
+				result : [] ,
+				message : 'Todo is not found'
+			});
+			return ;
+		}
+		res.send({
+			result : data
+		});
+	} , (err) => {
+		res.status(400).send(err);
+	})
 });
 
 
