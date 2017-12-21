@@ -11,7 +11,8 @@ const Todos = mongoose.model('Todos' , {
 	} ,
 	created : {
 		type : Number ,
-		required : true
+		required : false ,
+		default : new Date().getTime()
 	}
 });
 

@@ -36,11 +36,10 @@ describe('POST /todos' , () => {
 	});
 
 	it ('should not create a new todo' , (done) => {
-		let text = "Test Todo";
 
 		request(app)
 		.post('/todos')
-		.send({ text })
+		.send({  })
 		.expect(400)
 		.end( (err , res) => {
 			if (err)  {
@@ -117,7 +116,7 @@ describe('GET /todo/{ID}' , () => {
 
 
 	it ('should get a One Todo' , (done) => {
-		let id = '5a239142aa529104a5f3d102';
+		let id = '5a2a4ea253c31d3ae8e9a1e7';
 		request(app)
 		 .get(`/todo/${id}`)
 		 .expect(200)
@@ -126,6 +125,90 @@ describe('GET /todo/{ID}' , () => {
 			done();
 		 });
 	});
+});
+
+describe('DELETE /todo/{ID}' , () => {
+	it ('should be error if id equal empty' , (done) => {
+		request(app)
+		.delete('/todo/')
+		.expect(404)
+		.end( (err , res) => {
+			if (err) return done(err);
+			done();
+		})
+	});
+
+	it ('should be error if id is invalid' , (done) => {
+		let id = "1213455";
+		request(app)
+		.delete('/todo/' + id)
+		.expect(401)
+		.end( (err , res) => {
+			if (err) return done(err);
+			done();
+		})
+	});
+
+	it ('should be delete' , (done) => {
+	
+		Todos.findOne({}).sort({ _id : -1 }).then( (result) => {
+			request(app)
+			 .delete('/todo/' +  result._id)
+			 .expect(200)
+			 .end( (err , res) => {
+			 	if (err) return done(err);
+			 	done();
+			 });
+
+		} , (err) => {
+			console.log(err)
+		});
+
+	});
+
+});
+
+describe('UPDATE /todo/{ID}' , (done) => {
+
+	it ('should be error if id equal empty' , (done) => {
+		request(app)
+		.patch('/todo/')
+		.expect(404)
+		.end( (err , res) => {
+			if (err) return done(err);
+			done();
+		})
+	});
+
+	it ('should be error if id is invalid' , (done) => {
+		let id = "1213455";
+		request(app)
+		.patch('/todo/' + id)
+		.expect(401)
+		.end( (err , res) => {
+			if (err) return done(err);
+			done();
+		})
+	});
+
+	it ('should be update' , (done) => {
+	
+		Todos.findOne({}).sort({ _id : -1 }).then( (result) => {
+			request(app)
+			 .patch('/todo/' +  result._id)
+			 .send({ text : "Unit Test update" , completed : true })
+			 .expect(200)
+			 .end( (err , res) => {
+			 	if (err) return done(err);
+			 	done();
+			 });
+
+		} , (err) => {
+			console.log(err)
+		});
+
+	});
+
 });
 
 

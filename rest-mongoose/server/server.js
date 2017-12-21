@@ -20,7 +20,8 @@ app.post('/todos' , ( req , res , next ) => {
 		created : req.body.created
 	});
 
-	newData.save().then( (result) => {
+	newData.save().then( (result , _id ) => {
+		result._id = _id;
 		res.send(result);
 	} , ( {message} ) => {
 		res.status(400).send({
@@ -79,6 +80,38 @@ app.get('/todo/:id' , (req , res , next) => {
 	} , (err) => {
 		res.status(400).send(err);
 	})
+});
+
+app.delete('/todo/:id' , (req , res , next) => {
+
+	if ( mongoose.Types.ObjectId.isValid(req.params.id) === false ) {
+		res.status(401).send({
+			message : 'ID is invalid'
+		});
+	}
+
+	Todos.findByIdAndRemove(req.params.id).then( () => {
+		res.status(200).send({
+			message : 'Todo is deleted'
+		});
+	} , (err) => {
+		res.status(400).send(err);
+	});
+});
+
+app.patch('/todo/:id' , (req , res ) => {
+
+	if ( mongoose.Types.ObjectId.isValid(req.params.id) === false ) {
+		res.status(401).send({
+			message : 'ID is invalid'
+		});
+	}
+
+	Todos.findByIdAndUpdate(req.params.id , { $set : req.body } , { new: true }).then( (result) => {
+		res.status(200).send(result);
+	} , (err) => {
+		res.status(400).send(err);
+	});
 });
 
 
