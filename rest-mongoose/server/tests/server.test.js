@@ -116,56 +116,16 @@ describe('GET /todo/{ID}' , () => {
 
 
 	it ('should get a One Todo' , (done) => {
-		let id = '5a2a4ea253c31d3ae8e9a1e7';
-		request(app)
-		 .get(`/todo/${id}`)
-		 .expect(200)
-		 .end( (err , res) => {
-		 	if (err) return done(err);
-			done();
-		 });
-	});
-});
-
-describe('DELETE /todo/{ID}' , () => {
-	it ('should be error if id equal empty' , (done) => {
-		request(app)
-		.delete('/todo/')
-		.expect(404)
-		.end( (err , res) => {
-			if (err) return done(err);
-			done();
-		})
-	});
-
-	it ('should be error if id is invalid' , (done) => {
-		let id = "1213455";
-		request(app)
-		.delete('/todo/' + id)
-		.expect(401)
-		.end( (err , res) => {
-			if (err) return done(err);
-			done();
-		})
-	});
-
-	it ('should be delete' , (done) => {
-	
 		Todos.findOne({}).sort({ _id : -1 }).then( (result) => {
 			request(app)
-			 .delete('/todo/' +  result._id)
+			 .get(`/todo/${result._id}`)
 			 .expect(200)
 			 .end( (err , res) => {
 			 	if (err) return done(err);
-			 	done();
+				done();
 			 });
-
-		} , (err) => {
-			console.log(err)
 		});
-
 	});
-
 });
 
 describe('UPDATE /todo/{ID}' , (done) => {
@@ -197,6 +157,47 @@ describe('UPDATE /todo/{ID}' , (done) => {
 			request(app)
 			 .patch('/todo/' +  result._id)
 			 .send({ text : "Unit Test update" , completed : true })
+			 .expect(200)
+			 .end( (err , res) => {
+			 	if (err) return done(err);
+			 	done();
+			 });
+
+		} , (err) => {
+			console.log(err)
+		});
+
+	});
+
+});
+
+describe('DELETE /todo/{ID}' , () => {
+	it ('should be error if id equal empty' , (done) => {
+		request(app)
+		.delete('/todo/')
+		.expect(404)
+		.end( (err , res) => {
+			if (err) return done(err);
+			done();
+		})
+	});
+
+	it ('should be error if id is invalid' , (done) => {
+		let id = "1213455";
+		request(app)
+		.delete('/todo/' + id)
+		.expect(401)
+		.end( (err , res) => {
+			if (err) return done(err);
+			done();
+		})
+	});
+
+	it ('should be delete' , (done) => {
+	
+		Todos.findOne({}).sort({ _id : -1 }).then( (result) => {
+			request(app)
+			 .delete('/todo/' +  result._id)
 			 .expect(200)
 			 .end( (err , res) => {
 			 	if (err) return done(err);
