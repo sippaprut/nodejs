@@ -8,9 +8,11 @@ const { mongoose } = require('./db/mongoose');
 
 
 const {Todos} = require('./models/todo');
+const {User} = require('./models/user');
 
 const port = process.env.PORT || 3000;
 const app = express();
+const authorize = require('./middlewares/authorize.js');
 
 app.use(bodyParser.json());// support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -116,11 +118,38 @@ app.patch('/todo/:id' , (req , res ) => {
 	});
 });
 
+app.post('/user/' , (req , res) => {
+	const user = new User(req.body);
+
+	user.save()
+	.then( (result , _id ) => {
+		result.token = () => {
+			return user.generateToken();
+		}
+		return result;
+	})
+	.then( (result) => {
+		result.token().then((token) => {
+			res.status(200).header('jwt-auth' , token  ).send({
+				_id : result._id
+			});
+		});
+	})
+	.catch( (err) => {
+		res.status(400).send({ message : err});
+	});
+});
+
+app.get('/user/me' , authorize , (req , res) => {
+	res.status(200).send(req.user);
+});
+
 
 
 
 app.listen(port , () => {
 	console.log('Server is upon in port' + port);
+	console.log("Database name is " ,  process.env.MONGODB_URI);
 });
 
 module.exports = {app};

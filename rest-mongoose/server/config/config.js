@@ -7,5 +7,5 @@ else if ( env === 'development' ) {
 	process.env.MONGODB_URI = 'mongodb://localhost:27017/testDevelopment';
 }
 
-console.log(env)
+
 

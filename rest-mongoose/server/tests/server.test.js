@@ -3,7 +3,7 @@ const request = require('supertest');
 
 const {app} = require('./../server');
 const {Todos} = require('./../models/todo');
-
+const {User} = require('./../models/user');
 
 
 describe('POST /todos' , () => {
@@ -209,6 +209,122 @@ describe('DELETE /todo/{ID}' , () => {
 		});
 
 	});
+
+});
+
+describe('POST /user/' , () => {
+	it ('should be error if no email' , (done) => {
+		let post = {
+			password : '12345678' ,
+			tokens : {
+				access : 'xspdospispidw1213' ,
+				token : '12123130dfssdfsfsdf'
+			}
+		};
+
+		request(app)
+		 .post('/user/')
+		 .send(post)
+		 .expect(400)
+		 .end( (err , res) => {
+		 	if (err) return done(err);
+			done();
+		 });
+	});
+
+	it ('should be error if email is invalid' , (done) => {
+		let post = {
+			email : "sippaprut" ,
+			password : '12345678' ,
+			tokens : {
+				access : 'xspdospispidw1213' ,
+				token : '12123130dfssdfsfsdf'
+			}
+		};
+		request(app)
+		 .post('/user/')
+		 .send(post)
+		 .expect(400)
+		 .end( (err , res) => {
+		 	if (err) return done(err);
+		 	//expect(res.body.message).toBe('Users validation failed: email: Path `email` is required.')
+			done();
+		 });
+	});
+
+	it ('should be error if email is not uniqe' , (done) => {
+		let post = {
+			email : "sippaprut@gmail.com" ,
+			password : '12345678' ,
+			tokens : {
+				access : 'xspdospispidw1213' ,
+				token : '12123130dfssdfsfsdf'
+			}
+		};
+		request(app)
+		 .post('/user/')
+		 .send(post)
+		 .expect(400)
+		 .end( (err , res) => {
+		 	if (err) return done(err);
+		 	//expect(res.body.message).toBe('Users validation failed: email: Path `email` is required.')
+			done();
+		 });
+	});
+
+	it ('should be error if password is min 8 lenght' , (done) => {
+		let post = {
+			email : "sippaprut@gmail.com" ,
+			password : '1234567' ,
+			tokens : {
+				access : 'xspdospispidw1213' ,
+				token : '12123130dfssdfsfsdf'
+			}
+		};
+		request(app)
+		 .post('/user/')
+		 .send(post)
+		 .expect(400)
+		 .end( (err , res) => {
+		 	if (err) return done(err);
+			done();
+		 });
+	});
+
+	it ('should be success to add user' , (done) => {
+		let post = {
+			email : "taeza@gmail.com" ,
+			password : '12345678' ,
+			tokens : {
+				access : 'xspdospispidw1213' ,
+				token : '12123130dfssdfsfsdf'
+			}
+		};
+		request(app)
+		 .post('/user/')
+		 .send(post)
+		 .expect(200)
+		 .end( (err , res) => {
+		 	if (err) return done(err);
+
+		 	User.findByIdAndRemove(res.body._id).then( () => {
+		 		done();
+		 	}, (err) => {
+		 		console.log(err)
+		 	});
+		 });
+	});
+
+	it ('should be can not get user' , (done) => {
+		request(app)
+			.get('/user/me')
+			.expect(400)
+			.end( (err , res) => {
+				if (err) return done(err);
+				done();
+			});
+	});
+
 
 });
 
