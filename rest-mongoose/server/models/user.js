@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 
 const {SHA256} = require('crypto-js');
 
+const bcrypt = require('bcryptjs');
+
 const _ = require('lodash');
 
 const UserSchema = new mongoose.Schema({ 
@@ -60,6 +62,43 @@ UserSchema.methods.generateToken = function() {
 
 };
 
+UserSchema.statics.login = function(email , password ) {
+	let user = this;
+
+	return user.findOne({
+		email
+	})
+	.then( (item) => {
+		if ( ! item) {
+			return Promise.reject("Can not found");
+		}
+
+		return new Promise( (resolve , reject) => {
+			bcrypt.compare( password , item.password , (err , res) => {
+				if ( res) {
+					resolve(item);
+				}
+				else {
+					reject('User is not found');
+				}
+				
+			});
+		});
+	})
+}
+
+UserSchema.statics.logout = function(token) {
+	let user = this;
+	console.log(token)
+	return user.update({
+		$pull : {
+			tokens : {
+				token
+			}
+		}
+	});
+}
+
 UserSchema.statics.findByToken = function(token) {
 	let user = this;
 	let decoded;
@@ -76,6 +115,22 @@ UserSchema.statics.findByToken = function(token) {
 		'tokens.access' : decoded.access
 	})
 }
+
+UserSchema.pre('save' , function (next) {
+	let user = this;
+
+	if (user.isModified('password')) {
+		bcrypt.genSalt(10 , (err , salt) => {
+			bcrypt.hash(user.password , salt , (err , hash) => {
+				user.password = hash;
+				next();
+			});
+		});
+	} else {
+		next();
+	}
+
+});
 
 
 const User = mongoose.model('Users' , UserSchema );

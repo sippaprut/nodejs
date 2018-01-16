@@ -325,6 +325,37 @@ describe('POST /user/' , () => {
 			});
 	});
 
+	it ('should be can not login' , (done) => {
+		let post = {
+			email : "sip@funeralnet.com" ,
+			password : 1234
+		};
+
+		request(app)
+			.post('/user/login')
+			.send(post)
+			.expect(400)
+			.end( (err , res) => {
+				if (err) return done(err);
+				done();
+			});
+	});
+
+	it ('should be can login' , (done) => {
+		let post = {
+			email : "taeza111@hotmail.com" ,
+			password : "12345678"
+		};
+		request(app)
+			.post('/user/login')
+			.send(post)
+			.expect(200)
+			.end( (err , res) => {
+				if (err) return done(err);
+				done();
+			});
+	});
+
 
 });
 

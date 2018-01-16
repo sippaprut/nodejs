@@ -13,6 +13,7 @@ const {User} = require('./models/user');
 const port = process.env.PORT || 3000;
 const app = express();
 const authorize = require('./middlewares/authorize.js');
+const _ = require('lodash');
 
 app.use(bodyParser.json());// support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -140,8 +141,43 @@ app.post('/user/' , (req , res) => {
 	});
 });
 
+//authorize is middleware
 app.get('/user/me' , authorize , (req , res) => {
 	res.status(200).send(req.user);
+});
+
+
+//login
+app.post('/user/login' , (req , res) => {
+	let data = _.pick(req.body , ['email' , 'password']);
+	User.login(data.email , data.password )
+	.then((user) => {
+		user.generateToken().then((token) => {
+			res.status(200).header('jwt-auth' , user.tokens.token  ).send(user);
+		});
+	})
+	.catch( (err) => {
+		res.status(400).send({ message : err});
+	});
+
+});
+
+//logout
+app.delete('/user/me/token' , authorize ,  (req , res) => {
+	User.logout(req.token)
+	.then( (result) => {
+		if ( result.nModified == 0) {
+			res.status(401).send();
+		}
+
+
+		res.status(200).send({
+			status : 1
+		});
+	})
+	.catch( (err) => {
+		res.status(400).send({ message : err});
+	});
 });
 
 
